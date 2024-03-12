@@ -46,7 +46,7 @@ app.use(useragent.express());
 // Implement rate limiting (100 requests per hour)
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 500,
+  max: 5000000,
   message: 'Too many requests from this IP, please try again later.',
 });
 app.use('/api/', limiter);
