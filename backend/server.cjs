@@ -544,7 +544,7 @@ app.get('/api/queries', async (req, res) => {
     }
   });
   
-  app.get('/api/project/details/:title', async (req, res) => {
+  app.get('/api/project/:title', async (req, res) => {
     try {
        const slugTitle = req.params.title.replace(/-/g, ' '); // Replace hyphens with spaces
 
