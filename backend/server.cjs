@@ -544,39 +544,32 @@ app.get('/api/queries', async (req, res) => {
     }
   });
   
-  app.get('/api/projects/details/:id', async (req, res) => {
+  app.get('/api/project/details/:title', async (req, res) => {
     try {
-      const id = req.params.id;
-  
-      console.log('Received request for project with ID:', id); // Log the ID received
-  
-      // Check if the ID is a valid ObjectId
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        console.log('Invalid project ID:', id); // Log invalid ID
-        return res.status(400).json({ error: 'Invalid project ID' });
-      }
-  
-      // Use findById to query the project by its ObjectId
-      const project = await Project.findById(id);
-  
-      console.log('Project data retrieved:', project); // Log the project data retrieved
-  
-      if (!project) {
-        console.log('Project not found'); // Log if project not found
-        return res.status(404).json({ error: 'Project not found' });
-      }
-  
-      res.json(project);
+       const slugTitle = req.params.title.replace(/-/g, ' '); // Replace hyphens with spaces
+
+       console.log('Received request for project with slug title:', slugTitle); // Log the slug title received
+
+       // Construct a regex pattern to match project titles containing the words from the slug title
+       const regexPattern = slugTitle.split(' ').map(word => `(?=.*\\b${word}\\b)`).join('');
+
+       // Fetch the project with matching title from the database
+       const project = await Project.findOne({ title: { $regex: new RegExp(regexPattern, "i") } });
+
+       console.log('Project data retrieved:', project); // Log the project data retrieved
+
+       if (!project) {
+          console.log('Project not found'); // Log if project not found
+          return res.status(404).json({ error: 'Project not found' });
+       }
+
+       res.json(project);
     } catch (error) {
-      console.error('Error fetching project details:', error);
-      res.status(500).json({ error: 'Error fetching project details' });
+       console.error('Error fetching project details:', error);
+       res.status(500).json({ error: 'Error fetching project details' });
     }
-  });
-  
-  
-  
-  
-  
+ });
+ 
   
   
   
